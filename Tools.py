@@ -10,16 +10,54 @@ g = green
 """
 
 import string
-global wordle_set
-
-wordle_set = {}
-f = open("wordleList.txt", "r")
-for x in f:
-  wordle_set.add(list(x))
-num_guesses = 0
+global wordle_list
 
 # find a way to assign words with value based on letters that are more common
 
+# this helps sort wordle_list by frequency
+def byFrequency(a):
+  return a[0]
+
+freq_letters = {
+    "e"	: 1056,
+    "a" :	909,
+    "r" :	837,
+    "o" :	673,
+    "t" :	667,
+    "l" :	648,
+    "i" :	647,
+    "s"	: 618,
+    "n" :	550,
+    "u" :	457,
+    "c" :	448,
+    "y"	: 417,
+    "h" :	379,
+    "d" :	370,
+    "p" :	346,
+    "g" :	300,
+    "m" :	298,
+    "b" :	267,
+    "f" :	207,
+    "k" :	202,
+    "w" :	194,
+    "v" :	149,
+    "x" :	37,
+    "z" :	35,
+    "q" :	29,
+    "j" :	27
+}
+
+wordle_list = []
+f = open("wordleList.txt", "r")
+for word in f:
+  word = word.strip()
+  frequency = 0
+  for letter in word:
+    frequency = frequency + freq_letters[letter]
+  wordle_list.append((frequency, list(word)))
+wordle_list.sort(reverse=True, key=byFrequency)
+
+num_guesses = 0
 
 # there are other four vowel words but audio is the only one in the possible solutions list
 first_guess = "audio"
@@ -28,19 +66,21 @@ response = input("Enter colors: ") # will give us something like bbygb
 num_guesses += 1
 
 def remove_word(letter):
-  for x in wordle_set:
-    if x.contains(letter):
-      wordle_set.remove(x)
+  for x in wordle_list:
+    if letter in x[1]:
+      wordle_list.remove(x)
 
 def remove_y(letter, position):
-  for x in wordle_set:
-    if x[position] == letter:
-      wordle_set.remove(x)
+  for x in wordle_list:
+    word_list = x[1]
+    if word_list[position] == letter:
+      wordle_list.remove(x)
 
 def remove_g(letter, position):
-  for x in wordle_set:
-    if x[position] != letter:
-      wordle_set.remove(x)
+  for x in wordle_list:
+    word_list = x[1]
+    if word_list[position] != letter:
+      wordle_list.remove(x)
 
 
 current_guess = list(first_guess)
