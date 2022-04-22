@@ -92,7 +92,9 @@ def remove_g(letter, position):
 
 # there are other four vowel words but audio is the only one in the possible solutions list
 guess = "audio"
-while(num_guesses < 6) :
+
+response = "*****"
+while(response != "ggggg") :
   print("Enter Guess: " + guess)
   response = input("Enter colors: ") # will give us something like bbygb 
   num_guesses += 1
@@ -111,3 +113,4 @@ while(num_guesses < 6) :
       remove_g(current_guess[x], x)
       
   guess = ''.join(wordle_list[0][1])
+print("Number of Guesses: ", num_guesses)
