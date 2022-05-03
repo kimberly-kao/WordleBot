@@ -101,16 +101,56 @@ while(response != "ggggg") :
 
   current_guess = list(guess) # guess as a list of letters
   reponse = list(response)
+  temp_list = []
+  response_final = []
+  wordle_exception = False
   for x in range(5):
+    if current_guess[x] in temp_list:
+      lettera = response[current_guess.index(current_guess[x])]
+      letterb = response[x]
+      if lettera == 'g' and letterb == 'b':
+        print("Removing y " + current_guess[x] + " at position " + x)
+        remove_y(current_guess[x], x)
+        print("Removing g " + current_guess[x] + " at position " + current_guess.index(current_guess[x]))
+        remove_g(current_guess[x], current_guess.index(current_guess[x]))
+        wordle_exception = True
+        temp_list.remove(current_guess[x])
+        response_final.remove(response[current_guess.index(current_guess[x])])
+      elif lettera == 'b' and letterb == 'g':
+        remove_g(current_guess[x], x)
+        print("after remove g")
+        print(wordle_list)
+        remove_y(current_guess[x], current_guess.index(current_guess[x]))
+        print("after remove y")
+        print(wordle_list)
+        wordle_exception = True
+        temp_list.remove(current_guess[x])
+        response_final.remove(response[current_guess.index(current_guess[x])])
+      if not wordle_exception:
+        temp_list.append(current_guess[x])
+        response_final.append(response[x])
+    else:
+      temp_list.append(current_guess[x])
+      response_final.append(reponse[x])
+
+  print("this is the length of temp_list")
+  print(len(temp_list))
+  for x in range(len(temp_list)):
     # eliminate letters that are gray 
-    if (response[x] == 'b'):
-      remove_word(current_guess[x])
+    if (response_final[x] == 'b'):
+      remove_word(temp_list[x])
+      print("after remove b")
+      print(wordle_list)
     # remove words from solutions list that have this letter in this position
-    if (response[x] == 'y'):
-      remove_y(current_guess[x], x)
+    if (response_final[x] == 'y'):
+      remove_y(temp_list[x], x)
+      print("after remove y")
+      print(wordle_list)
     # remove words from the solutions list that don't have this letter in this position
-    if(response[x] == 'g'):
-      remove_g(current_guess[x], x)
+    if(response_final[x] == 'g'):
+      remove_g(temp_list[x], x)
+      print("after remove g")
+      print(wordle_list)
       
   guess = ''.join(wordle_list[0][1])
 print("Number of Guesses: ", num_guesses)
