@@ -59,8 +59,7 @@ for word in f:
       frequency = frequency + freq_letters[letter]
   wordle_list.append((frequency, list(word)))
 wordle_list.sort(reverse=True, key=byFrequency)
-
-num_guesses = 0
+sorted_wordle_list = wordle_list.copy()
 
 def remove_word(letter):
   to_remove = []
@@ -90,67 +89,73 @@ def remove_g(letter, position):
   for x in to_remove:
     wordle_list.remove(x)
 
-# there are other four vowel words but audio is the only one in the possible solutions list
-guess = "audio"
+loop = True
+while loop:
+  num_guesses = 0
+  response = "*****"
 
-response = "*****"
-while(response != "ggggg") :
-  print("Enter Guess: " + guess)
-  response = input("Enter colors: ") # will give us something like bbygb 
-  num_guesses += 1
+  # there are other four vowel words but audio is the only one in the possible solutions list
+  guess = "audio"
 
-  current_guess = list(guess) # guess as a list of letters
-  reponse = list(response)
-  temp_list = []
-  response_final = []
-  wordle_exception = False
-  for x in range(5):
-    if current_guess[x] in temp_list:
-      lettera = response[current_guess.index(current_guess[x])]
-      letterb = response[x]
-      if lettera == 'g' and letterb == 'b':
-        print("Removing y " + current_guess[x] + " at position " + x)
-        remove_y(current_guess[x], x)
-        print("Removing g " + current_guess[x] + " at position " + current_guess.index(current_guess[x]))
-        remove_g(current_guess[x], current_guess.index(current_guess[x]))
-        wordle_exception = True
-        temp_list.remove(current_guess[x])
-        response_final.remove(response[current_guess.index(current_guess[x])])
-      elif lettera == 'b' and letterb == 'g':
-        remove_g(current_guess[x], x)
-        print("after remove g")
-        print(wordle_list)
-        remove_y(current_guess[x], current_guess.index(current_guess[x]))
-        print("after remove y")
-        print(wordle_list)
-        wordle_exception = True
-        temp_list.remove(current_guess[x])
-        response_final.remove(response[current_guess.index(current_guess[x])])
-      if not wordle_exception:
+  while(response != "ggggg") :
+    print("Enter Guess: " + guess)
+    response = input("Enter colors: ") # will give us something like bbygb 
+    num_guesses += 1
+
+    current_guess = list(guess) # guess as a list of letters
+    reponse = list(response)
+    if len(response) != 5:
+      response = input("Incorrect response length, please enter colors again: ")
+    for x in range(5):
+      if response[x] != 'b' and response[x] != 'y' and response[x] != 'g':
+        response = input("Incorrect response input, please enter colors again: ")
+  
+    # this section fixes a special case
+    temp_list = []
+    response_final = []
+    wordle_exception = False
+    for x in range(5):
+      if current_guess[x] in temp_list:
+        lettera = response[current_guess.index(current_guess[x])]
+        letterb = response[x]
+        if lettera == 'g' and letterb == 'b':
+          remove_y(current_guess[x], x)
+          remove_g(current_guess[x], current_guess.index(current_guess[x]))
+          wordle_exception = True
+          temp_list.remove(current_guess[x])
+          response_final.remove(response[current_guess.index(current_guess[x])])
+        elif lettera == 'b' and letterb == 'g':
+          remove_g(current_guess[x], x)
+          remove_y(current_guess[x], current_guess.index(current_guess[x]))
+          wordle_exception = True
+          temp_list.remove(current_guess[x])
+          response_final.remove(response[current_guess.index(current_guess[x])])
+        if not wordle_exception:
+          temp_list.append(current_guess[x])
+          response_final.append(response[x])
+      else:
         temp_list.append(current_guess[x])
-        response_final.append(response[x])
-    else:
-      temp_list.append(current_guess[x])
-      response_final.append(reponse[x])
+        response_final.append(reponse[x])
 
-  print("this is the length of temp_list")
-  print(len(temp_list))
-  for x in range(len(temp_list)):
-    # eliminate letters that are gray 
-    if (response_final[x] == 'b'):
-      remove_word(temp_list[x])
-      print("after remove b")
-      print(wordle_list)
-    # remove words from solutions list that have this letter in this position
-    if (response_final[x] == 'y'):
-      remove_y(temp_list[x], x)
-      print("after remove y")
-      print(wordle_list)
-    # remove words from the solutions list that don't have this letter in this position
-    if(response_final[x] == 'g'):
-      remove_g(temp_list[x], x)
-      print("after remove g")
-      print(wordle_list)
+    for x in range(len(temp_list)):
+      # eliminate letters that are gray 
+      if (response_final[x] == 'b'):
+        remove_word(temp_list[x])
+
+      # remove words from solutions list that have this letter in this position
+      if (response_final[x] == 'y'):
+        remove_y(temp_list[x], x)
+
+      # remove words from the solutions list that don't have this letter in this position
+      if(response_final[x] == 'g'):
+        remove_g(temp_list[x], x)
       
-  guess = ''.join(wordle_list[0][1])
-print("Number of Guesses: ", num_guesses)
+        
+    guess = ''.join(wordle_list[0][1])
+  print("Number of Guesses: ", num_guesses)
+  loop_response = input("Play again? (y/n): ")
+  if loop_response.lower() == "n":
+    loop = False
+  if loop_response.lower() == 'y':
+    # reset list back to state before removals
+    wordle_list = sorted_wordle_list.copy()
