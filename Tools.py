@@ -111,32 +111,39 @@ while loop:
         response = input("Incorrect response input, please enter colors again: ")
   
     # this section fixes a special case
-    temp_list = []
-    response_final = []
-    wordle_exception = False
+    temp_list = [] # this will remove duplicates if there is a special case, if there is not a special case, it will be a copy of current_guess
+    response_final = [] # this will adjust the response appropriately, if there is not a special case, it will be a copy of response
+    wordle_exception = False 
+    
     for x in range(5):
-      if current_guess[x] in temp_list:
-        lettera = response[current_guess.index(current_guess[x])]
-        letterb = response[x]
-        if lettera == 'g' and letterb == 'b':
-          remove_y(current_guess[x], x)
-          remove_g(current_guess[x], current_guess.index(current_guess[x]))
+      if current_guess[x] in temp_list: # if there is duplicate letters
+        lettera = response[current_guess.index(current_guess[x])] # the response of the letter already in the list
+        letterb = response[x] # the response of the duplicate letter
+
+        if lettera == 'g' and letterb == 'b': 
+          remove_y(current_guess[x], x) # this will remove the letter in the wrong position (letterb)
+          remove_g(current_guess[x], current_guess.index(current_guess[x])) 
           wordle_exception = True
-          temp_list.remove(current_guess[x])
-          response_final.remove(response[current_guess.index(current_guess[x])])
+          temp_list.remove(current_guess[x]) # remove the word from the temp_list
+          response_final.remove(response[current_guess.index(current_guess[x])]) # remove the response from response_final
+
         elif lettera == 'b' and letterb == 'g':
-          remove_g(current_guess[x], x)
-          remove_y(current_guess[x], current_guess.index(current_guess[x]))
-          wordle_exception = True
-          temp_list.remove(current_guess[x])
-          response_final.remove(response[current_guess.index(current_guess[x])])
+          remove_g(current_guess[x], x) 
+          remove_y(current_guess[x], current_guess.index(current_guess[x])) # this will remove the letter in the wrong position (lettera)
+          wordle_exception = True 
+          temp_list.remove(current_guess[x]) # remove the word from the temp_list
+          response_final.remove(response[current_guess.index(current_guess[x])]) # remove the response from response_final
+        
+         # if this is not a wordle exception and the word just contains two duplicates, we want to keep them in the current_guess list
         if not wordle_exception:
           temp_list.append(current_guess[x])
-          response_final.append(response[x])
+          response_final.append(response[x]) 
+      # there is no duplicate so far
       else:
         temp_list.append(current_guess[x])
         response_final.append(reponse[x])
 
+    # remove the words based on the response 
     for x in range(len(temp_list)):
       # eliminate letters that are gray 
       if (response_final[x] == 'b'):
