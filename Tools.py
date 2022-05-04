@@ -103,7 +103,6 @@ while loop:
     num_guesses += 1
 
     current_guess = list(guess) # guess as a list of letters
-    reponse = list(response)
     if len(response) != 5:
       response = input("Incorrect response length, please enter colors again: ")
     for x in range(5):
