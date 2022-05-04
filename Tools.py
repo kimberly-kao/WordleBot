@@ -116,7 +116,7 @@ while loop:
     wordle_exception = False 
     
     for x in range(5):
-      if current_guess[x] in temp_list: # if there is duplicate letters
+      if current_guess[x] in temp_list: # if there are duplicate letters
         lettera = response[current_guess.index(current_guess[x])] # the response of the letter already in the list
         letterb = response[x] # the response of the duplicate letter
 
@@ -141,7 +141,7 @@ while loop:
       # there is no duplicate so far
       else:
         temp_list.append(current_guess[x])
-        response_final.append(reponse[x])
+        response_final.append(response[x])
 
     # remove the words based on the response 
     for x in range(len(temp_list)):
